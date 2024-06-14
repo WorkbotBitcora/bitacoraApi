@@ -3,6 +3,7 @@ package co.uco.bitacora.service.bitacora;
 import co.uco.bitacora.domain.bitacora.*;
 import co.uco.bitacora.domain.bitacora.descripcion.Descripcion;
 import co.uco.bitacora.domain.bitacora.estado.Estado;
+import co.uco.bitacora.domain.equipo.RespuestaEquipoCreado;
 import co.uco.bitacora.domain.equipo.TipoEquipo;
 import co.uco.bitacora.domain.objetoAuxiliar.DatosEquipo;
 import co.uco.bitacora.domain.recomendacion.Recomendacion;
@@ -56,7 +57,7 @@ public class BitacoraService {
     @Autowired
     private RevisionService revisionService = new RevisionService();
 
-    private List<Bitacora> bitacoras = new ArrayList<>();
+
 
     private Bitacora bitacoraAUX = new Bitacora();
     private BitacoraDB bitacoraDBAUX = new BitacoraDB();
@@ -68,9 +69,11 @@ public class BitacoraService {
     private Recomendacion recomendacionAux = new Recomendacion();
 
 
-    public String AgregarBitacoraAlaAgenda(userDescription usde) {
+    public RespuestaAgendaCreada AgregarBitacoraAlaAgenda(userDescription usde) {
+        List<Bitacora> bitacoras = new ArrayList<>();
+        System.out.println("------------------------------------------------------------------------------------------------------------------------ va a crear una agenda");
         if (iUsuarioRepository.findById(usde.getIdUser()).isEmpty()) {
-            return "No existe el usuario";
+            return new RespuestaAgendaCreada("No existe el usuario");
         } else {
 
             try {
@@ -94,10 +97,10 @@ public class BitacoraService {
 
                 iBitacoraDBRepository.save(bitacoraDBAUX);
 
-                return "La agenda Se A Guardado Con Exito ";
+                return new RespuestaAgendaCreada();
 
             } catch (Exception e) {
-                return "salio un error 212121: " + e.getMessage();
+                return new RespuestaAgendaCreada("salio un error 212121: " + e.getMessage());
             }
         }
     }
@@ -140,13 +143,48 @@ public class BitacoraService {
 
     }
 
-    //FALTA PRUEBAS
-    public List<Bitacora> mostrarAgenda() throws InterruptedException {
+    public List<Bitacora> mostrarAgendaCompletadas() throws InterruptedException {
         List<BitacoraDB> listaBitacoraDB = iBitacoraDBRepository.findAll();
+        List<Bitacora> bitacoras = new ArrayList<>();
 
 
         for (int i = 0; i < listaBitacoraDB.size(); i++) {
-            System.out.println("i en el ciclo : " + i );
+            Revision revision = new Revision();
+            pedirRevisionAlProcesador(listaBitacoraDB.get(i).getRevision().getId());
+            Thread.sleep(1000);
+            Revision revision1 = suscripcion1.getRevision();
+
+            revision.setId(revision1.getId());
+            revision.setFechaFinal(revision1.getFechaFinal());
+            revision.setEquipo(revision1.getEquipo());
+            revision.setObservacion(revision1.getObservacion());
+            revision.setChekList(revision1.getChekList());
+
+
+            Bitacora bitacoraAUX1 = new Bitacora();
+
+            bitacoraAUX1.setRevision(revision);
+
+            bitacoraAUX1.setUsuario(listaBitacoraDB.get(i).getUsuario());
+            bitacoraAUX1.setFechaEntrada(listaBitacoraDB.get(i).getFechaEntrada());
+            bitacoraAUX1.setId(listaBitacoraDB.get(i).getId());
+            bitacoraAUX1.setEstado(listaBitacoraDB.get(i).getEstado());
+            bitacoraAUX1.setDescripcion(listaBitacoraDB.get(i).getDescription());
+            if (bitacoraAUX1.getEstado().getNombre().equals("Completo")){
+                bitacoras.add(bitacoraAUX1);
+            }
+        }
+
+        return bitacoras;
+    }
+
+    public List<Bitacora> mostrarAgenda() throws InterruptedException {
+        List<BitacoraDB> listaBitacoraDB = iBitacoraDBRepository.findAll();
+        List<Bitacora> bitacoras = new ArrayList<>();
+
+
+        for (int i = 0; i < listaBitacoraDB.size(); i++) {
+
 
             Revision revision = new Revision();
             pedirRevisionAlProcesador(listaBitacoraDB.get(i).getRevision().getId());
@@ -170,43 +208,58 @@ public class BitacoraService {
             bitacoraAUX1.setEstado(listaBitacoraDB.get(i).getEstado());
             bitacoraAUX1.setDescripcion(listaBitacoraDB.get(i).getDescription());
 
-            System.out.println("id de la bitacora que va a guardar en  la lista" + bitacoraAUX1.getId());
             bitacoras.add(i, bitacoraAUX1);
         }
-        System.out.println("id de la bitacora 1 : " + bitacoras.get(0).getId());
-        System.out.println("id de la bitacora 2 : " + bitacoras.get(1).getId());
+
         return bitacoras;
     }
 
     @Transactional
-    public String editarEquipo(long idRevision, DatosEquipo actualizacion) {
+    public RespuestaEquipoCreado editarEquipo(long idRevision, DatosEquipo actualizacion) {
         try {
-            return revisionService.revisionNuevaconIdTipoequipo(idRevision, actualizacion.getTipoEquipo(), actualizacion.getMarca());
+            return new RespuestaEquipoCreado(revisionService.revisionNuevaconIdTipoequipo(idRevision, actualizacion.getTipoEquipo(), actualizacion.getMarca()));
         } catch (Exception e) {
-            return "no se actualizo";
+            return new RespuestaEquipoCreado("no se actualizo");
         }
     }
 
-    public List<Bitacora> mostrarPorUsuario(long id) {
-        List<BitacoraDB> bitacorasDB = iBitacoraDBRepository.findAll();
+    public List<Bitacora> mostrarPorUsuario(long id) throws InterruptedException {
+        List<BitacoraDB> listaBitacoraDB = iBitacoraDBRepository.findAll();
         List<Bitacora> bitacoras = new ArrayList<>();
-        Bitacora bitacoraAux = new Bitacora();
 
-        for (int i = 0; i < bitacorasDB.size(); i++) {
-            if (bitacorasDB.get(i).getUsuario().getId() == id) {
-                Revision revision  = new Revision();
-                //Revision revision = pedirRevisionAlProcesador(bitacorasDB.get(i).getRevision().getId());
-                bitacoraAUX.setRevision(revision);
-                bitacoraAUX.setUsuario(bitacorasDB.get(i).getUsuario());
-                bitacoraAUX.setFechaEntrada(bitacorasDB.get(i).getFechaEntrada());
-                bitacoraAUX.setId(bitacorasDB.get(i).getId());
-                bitacoraAUX.setEstado(bitacorasDB.get(i).getEstado());
-                bitacoraAUX.setDescripcion(bitacorasDB.get(i).getDescription());
-                bitacoras.add(bitacoraAux);
+
+        for (int i = 0; i < listaBitacoraDB.size(); i++) {
+
+
+            Revision revision = new Revision();
+            pedirRevisionAlProcesador(listaBitacoraDB.get(i).getRevision().getId());
+            Thread.sleep(1000);
+            Revision revision1 = suscripcion1.getRevision();
+
+            revision.setId(revision1.getId());
+            revision.setFechaFinal(revision1.getFechaFinal());
+            revision.setEquipo(revision1.getEquipo());
+            revision.setObservacion(revision1.getObservacion());
+            revision.setChekList(revision1.getChekList());
+
+
+            Bitacora bitacoraAUX1 = new Bitacora();
+
+            bitacoraAUX1.setRevision(revision);
+
+            bitacoraAUX1.setUsuario(listaBitacoraDB.get(i).getUsuario());
+            bitacoraAUX1.setFechaEntrada(listaBitacoraDB.get(i).getFechaEntrada());
+            bitacoraAUX1.setId(listaBitacoraDB.get(i).getId());
+            bitacoraAUX1.setEstado(listaBitacoraDB.get(i).getEstado());
+            bitacoraAUX1.setDescripcion(listaBitacoraDB.get(i).getDescription());
+
+            if (bitacoraAUX1.getUsuario().getId()==id){
+                bitacoras.add(bitacoraAUX1);
             }
         }
         return bitacoras;
     }
+
 
 
     public void cancelarSolicitid(long id) {

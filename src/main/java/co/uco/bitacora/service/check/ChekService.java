@@ -1,10 +1,13 @@
 package co.uco.bitacora.service.check;
 
+import co.uco.bitacora.domain.bitacora.estado.Estado;
 import co.uco.bitacora.domain.objetoAuxiliar.DatoChek;
 import co.uco.bitacora.domain.revision.Chek;
 import co.uco.bitacora.domain.revision.Revision;
 import co.uco.bitacora.rabbitMQ.Publicador;
 import co.uco.bitacora.rabbitMQ.Suscription;
+import co.uco.bitacora.repository.bitacora.IBitacoraDBRepository;
+import co.uco.bitacora.repository.bitacora.IEstadoRepository;
 import co.uco.bitacora.service.recomendacion.RecomendacionService;
 import jakarta.transaction.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -21,6 +24,11 @@ public class ChekService {
     private Publicador publicador;
     @Autowired
     private Suscription suscripcion1;
+    @Autowired
+    private IBitacoraDBRepository iBitacoraDBRepository;
+    @Autowired
+    private IEstadoRepository iEstadoRepository;
+
 
     @Autowired
     private RecomendacionService servicioRecomendaciones = new RecomendacionService();
@@ -112,6 +120,9 @@ public class ChekService {
                         revision.getChekList().get(i).setEstado(listRespuesta.get(i).getEstado());
                 }
             }
+            Estado estado = new Estado(3);
+            iEstadoRepository.save(estado);
+            iBitacoraDBRepository.cambiarEStadoBitacora(revision.getId(),estado.getId());
             publicador.publicarColaA(revision);
             return "Se guardo con exito";
 

@@ -3,6 +3,7 @@ package co.uco.bitacora.controller.jwt;
 import co.uco.bitacora.domain.jwt.JwtResponse;
 import co.uco.bitacora.domain.objetoAuxiliar.EditableUsuario;
 import co.uco.bitacora.domain.objetoAuxiliar.Login;
+import co.uco.bitacora.domain.usuario.RespuestaUsuarioRegistro;
 import co.uco.bitacora.domain.usuario.RespuetaUsuarioLogin;
 import co.uco.bitacora.rabbitMQ.Publicador;
 import co.uco.bitacora.service.jwt.JwtAuthenticationService;
@@ -32,7 +33,7 @@ public class JwtAuthenticationController {
 
     @PostMapping(value = "/reg")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> registrar(@RequestBody EditableUsuario editableUsuario) {
+    public ResponseEntity<RespuestaUsuarioRegistro> registrar(@RequestBody EditableUsuario editableUsuario) {
         return ResponseEntity.ok(jwtAuthenticationService.registrar(editableUsuario));
     }
 

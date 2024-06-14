@@ -3,6 +3,7 @@ package co.uco.bitacora.service.jwt;
 import co.uco.bitacora.domain.jwt.JwtResponse;
 import co.uco.bitacora.domain.objetoAuxiliar.EditableUsuario;
 import co.uco.bitacora.domain.objetoAuxiliar.Login;
+import co.uco.bitacora.domain.usuario.RespuestaUsuarioRegistro;
 import co.uco.bitacora.domain.usuario.RespuetaUsuarioLogin;
 import co.uco.bitacora.domain.usuario.TipoUsuario;
 import co.uco.bitacora.domain.usuario.Usuario;
@@ -52,7 +53,7 @@ public class JwtAuthenticationService {
 
     }
 
-    public String registrar(EditableUsuario editableUsuario) {
+    public RespuestaUsuarioRegistro registrar(EditableUsuario editableUsuario) {
         //Aqui se Crea el usuario
         TipoUsuario tipoUsuario =new TipoUsuario(editableUsuario.getIdTipoUsuario());
         iTipoUsuarioRepository.save(tipoUsuario);
@@ -64,6 +65,6 @@ public class JwtAuthenticationService {
         iUsuarioRepository.save(usuarioAux);
 
 
-        return "ok";
+        return new RespuestaUsuarioRegistro();
     }
 }

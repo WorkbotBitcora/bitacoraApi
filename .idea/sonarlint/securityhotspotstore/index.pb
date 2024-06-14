@@ -68,8 +68,6 @@ f
 q
 Asrc/main/java/co/uco/bitacora/rabbitMQ/RabbitMQConfiguracion.java,f\0\f00a2c341d2c514a873f76585015bf9323f20808
 g
-7src/main/java/co/uco/bitacora/rabbitMQ/Suscripcion.java,1\1\114d3205423d03c1128c73a14b68f8d86070f976
-g
 7src/main/java/co/uco/bitacora/domain/revision/Chek.java,6\b\6b5a29c16d5a882d09317a812cd7acd54e047566
 z
 Jsrc/main/java/co/uco/bitacora/domain/bitacora/descripcion/Descripcion.java,e\d\ed635a865fb9065e35bbb6456fe63d88b8d0f988
@@ -107,3 +105,13 @@ Lsrc/main/java/co/uco/bitacora/domain/bitacora/observacion/ObservacionDB.java,2
 Ssrc/main/java/co/uco/bitacora/repository/observacioen/IObservacionesRepository.java,3\0\300dbc110481333ef112c216ea1f8ad067682257
 g
 7src/main/java/co/uco/bitacora/rabbitMQ/Suscription.java,2\e\2e68987147583fa8e8d0d71c4ea26d4bc7c3ff8c
+x
+Hsrc/main/java/co/uco/bitacora/repository/usuario/IUsuarioRepository.java,d\5\d5a7a7d0a84d7de152e478754501a5d19d9b2f42
+7
+gradlew,5\b\5bbfa66edb4db3c7c33c5181f43510990d3307f9
+z
+Jsrc/main/java/co/uco/bitacora/domain/usuario/RespuestaUsuarioRegistro.java,3\1\31ad87633cc847c2c708cc826d8192b9b0e30aae
+x
+Hsrc/main/java/co/uco/bitacora/domain/bitacora/RespuestaAgendaCreada.java,4\b\4bc68e5f9aad07a5502b91c2b918d408d8f0061a
+v
+Fsrc/main/java/co/uco/bitacora/domain/equipo/RespuestaEquipoCreado.java,d\5\d5654a5a4e7c4afdd15dcd004aa375a1e6d2b72c

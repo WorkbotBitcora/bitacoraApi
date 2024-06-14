@@ -22,6 +22,7 @@ public class Usuario implements UserDetails {
 
     @Column(nullable = false, unique = true)
     private String usuario;
+
     private String contrasena;
 
     @ManyToOne
